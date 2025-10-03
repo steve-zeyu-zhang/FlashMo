@@ -1,7 +1,7 @@
 # Upstream snapshots and licenses
 
-`third_party/upstream.json` records the exact revisions inspected for this
-implementation. Complete upstream license texts are retained byte-for-byte
+`third_party/upstream.json` pins source revisions, usage, and licenses.
+Complete upstream license texts are retained byte-for-byte
 under `third_party/licenses/`, including their original copyright notices.
 The manifest records SHA256 hashes of those files and how each source is used.
 
@@ -22,8 +22,8 @@ python scripts/fetch_upstream.py
 python scripts/fetch_upstream.py --check
 ```
 
-Snapshots go to ignored `third_party/checkouts/`. No upstream histories are
-added to FlashMo's Git history. Existing directories with a different revision
+Snapshots go to ignored `third_party/checkouts/`. Existing directories with a
+different revision
 or tracked edits are rejected; the script never resets or overwrites them.
 Build submodules can be included when creating new snapshots with
 `--submodules`. Existing checkouts remain read-only, including submodules.
@@ -51,14 +51,10 @@ decoder to predict manifold velocities instead of denoised HumanML3D features.
 SiT's transport is replaced by GFI, and LITv2 HiLo's image windows/pooling are
 replaced by FlashMo's full Hi-Fi attention and selected Lo-Fi temporal keys.
 
-Attention-based adaptive token selection is an independent adaptation of
+Attention-based adaptive token selection implements the cumulative scoring in
 [ZipVL v2, Equations 6–9](https://arxiv.org/html/2410.08584v2).
-As checked on 2025-10-04 02:04:45 +10:00, the
-[author's ZipVL repository](https://github.com/ThisisBillhe/zipvl) at
-`1bc84a455ad5223b4a41b4c64e5537bd8d6393df` contains the project website, not
-the algorithm implementation. The [official project page](https://hexy.tech/zipvl/)
-links the paper but no implementation. The manifest records this distinction;
-no ZipVL website assets or algorithm source files are copied into FlashMo.
+The manifest records the paper and project links. The scorer is implemented
+within FlashMo; no ZipVL source files or website assets are included.
 
 To fetch only selected source projects for an attribution audit, use their
 manifest identifiers, for example `python scripts/fetch_upstream.py --only mdm lie_vae`.

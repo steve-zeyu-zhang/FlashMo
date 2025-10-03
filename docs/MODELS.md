@@ -1,21 +1,20 @@
-# Motion models and implementation choices
+# Motion models
 
-MotionSiT and frequency-aware sparsification follow FlashMo Sections 3.2–3.3.
-The OpenReview discussion specifies the SO(3) posterior
-`R_z = R_mu @ Exp(v)` and training on original AMASS rotations matched to
-the HumanML3D index. Rotation inputs come from those original sequences;
+MotionSiT combines the SO(3) posterior `R_z = R_mu @ Exp(v)` with
+frequency-aware sparsification. Training uses original AMASS rotations matched
+to the HumanML3D index. Rotation inputs come from those original sequences;
 HumanML3D velocity features use a different representation.
 
 ## Architecture
 
-| Component | Full configuration | Source / adaptation |
+| Component | Full configuration | Design notes |
 |---|---|---|
-| Motion VAE | 4 encoder and 4 decoder layers, width 512, 4 heads, temporal compression 4 | FlashMo §4.2; learned temporal down/up projections fill an unspecified architectural detail |
-| Rotation latent | 22 SO(3) factors per compressed frame | Reproduction choice; paper does not give the number of factors. Hidden width 512 is not a rotation coordinate dimension |
-| Translation latent | Independent 3-D diagonal Gaussian per compressed frame | Explicit implementation choice for retaining root motion; not mapped to SO(3) |
-| MotionSiT | Transformer decoder, 8 layers, width 512, 4 heads; continuous time embedding | FlashMo §3.2 and §4.2; clean-prefix conditioning and text cross-attention are implementation choices |
-| Text | Frozen CLIP ViT-B/32 projected pooled token | FlashMo §4.2; an optional alternative encoder is documented in Acknowledgements |
-| Frequency-aware sparse multi-head attention (Sparse-MHA) | First half of heads Lo-Fi, other half Hi-Fi; mass threshold 0.95 | Frequency-aware head partition and attention-based adaptive token selection, FlashMo §3.3 |
+| Motion VAE | 4 encoder and 4 decoder layers, width 512, 4 heads, temporal compression 4 | Learned temporal down/up projections |
+| Rotation latent | 22 SO(3) factors per compressed frame | Factor count is configured separately from transformer hidden width |
+| Translation latent | Independent 3-D diagonal Gaussian per compressed frame | Euclidean root motion, separate from SO(3) rotations |
+| MotionSiT | Transformer decoder, 8 layers, width 512, 4 heads; continuous time embedding | Clean-prefix conditioning and text cross-attention |
+| Text | Frozen CLIP ViT-B/32 projected pooled token | An optional alternative encoder is documented in Acknowledgements |
+| Frequency-aware sparse multi-head attention (Sparse-MHA) | First half of heads Lo-Fi, other half Hi-Fi; mass threshold 0.95 | Frequency-aware head partition and attention-based adaptive token selection |
 
 The MotionSiT implementation uses a transformer decoder: concatenate a clean
 motion prefix with the noisy suffix, project motion frames, add positional
@@ -33,9 +32,8 @@ The encoder predicts an SO(3) mean through a 6D frame and a diagonal tangent
 standard deviation. It samples `epsilon ~ N(0,I)`, then computes
 `R_z = R_mu @ Exp(std * epsilon)`. Every latent rotation is a matrix on SO(3).
 The loss uses a wrapped group density with exponential-map volume correction
-and preimages at angle offsets `2*pi*k`, `k=-3,...,3`. This implements the
-SO(3) VAE posterior specified in the author clarification; its mathematical
-sources are credited in [Acknowledgements](#acknowledgements).
+and preimages at angle offsets `2*pi*k`, `k=-3,...,3`. Mathematical
+references are credited in [Acknowledgements](#acknowledgements).
 
 The default rotation prior is `Exp(N(0,I))`; the Monte Carlo KL uses
 `log q_SO3 - log p_SO3`. This default aligns its base distribution with the
@@ -57,26 +55,25 @@ the 22 decoded physical joints.
 
 ### Frequency-aware head partition
 
-FlashMo partitions attention heads into Hi-Fi and Lo-Fi groups. It uses
+Attention heads are partitioned into Hi-Fi and Lo-Fi groups, with
 full temporal attention for Hi-Fi heads and selected temporal keys/values for
-Lo-Fi heads. This code uses the fixed head partition from FlashMo §3.3; it
-does not claim that an FFT dynamically reassigns heads. `frequency_energy`
-provides an FFT diagnostic only.
+Lo-Fi heads. The head partition is fixed. `frequency_energy` provides an FFT
+diagnostic without changing head assignments.
 
 ### Attention-based adaptive token selection
 
 The implementation applies softmax to attention logits, sums each key column,
 chooses the smallest number
 of keys covering the configured attention mass, normalizes column scores by their
-nonzero counts, and retains the top keys. FlashMo keeps **all queries**.
+nonzero counts, and retains the top keys. Selection keeps **all queries**.
 Both training and inference use this selection. The top-k decision is
 discrete; selected attention values and projections remain differentiable.
 
 `selection_queries=0` computes exact full-query selection scores in chunks.
 A positive value activates an optional query-subset approximation, using a
-uniformly spaced subset of each valid sequence. Exact selection still has
-quadratic scoring cost. This implementation does not claim the paper's
-reported 2.25x acceleration or AIT without a separate benchmark.
+uniformly spaced subset of each valid sequence. Exact selection has
+quadratic scoring cost. Acceleration and AIT require separate benchmarks
+with matched sequence lengths, hardware, and attention backends.
 
 ### Sparse multi-head attention and CUDA execution
 
@@ -96,7 +93,7 @@ unselected keys before launching the kernel. This detail matters when
 interpreting speed measurements, especially for short motion latents.
 
 Supported kernel inputs are CUDA FP16/BF16 and head dimensions 32, 64, 128.
-The paper's width 512 / 4 heads gives dimension 128. Explicit `block_sparse`
+The full configuration's width 512 / 4 heads gives dimension 128. Explicit `block_sparse`
 uses BF16 for Q/K/V even if the surrounding model is FP32, then returns FP32
 outputs. `attention_dtype` can override the kernel precision. Geometry and
 wrapped-density calculations remain FP32; whole-model autocast is not needed.

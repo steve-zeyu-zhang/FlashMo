@@ -1,6 +1,6 @@
-# Execution verification
+# Verification
 
-Verified locally on 2025-10-04 02:04:45 +10:00 with Python 3.10.12, PyTorch 2.6.0+cu124,
+Validation environment: Python 3.10.12, PyTorch 2.6.0+cu124,
 CUDA 12.4, NVIDIA H200 GPUs, Transformers 4.48.3, and the compiled
 sparse attention backend (version 0.0.2). Upstream revisions and license checks match
 the [pinned source manifest](../third_party/upstream.json).
@@ -51,10 +51,10 @@ no AMASS example files.
 
 ## Limits
 
-These are execution and numerical checks, not pretrained FlashMo weights or
-reproduced benchmark scores. Full training on the licensed AMASS-derived
-HumanML3D corpus remains necessary. End-to-end export with licensed SMPL-H
+The checks cover numerical behavior and short training runs. Benchmark
+validation requires full training on the licensed AMASS-derived HumanML3D
+corpus. End-to-end export with licensed SMPL-H
 assets and the real reference skeleton has not been run; its conversion
 subroutines are covered by fixtures. MotionHub V2 pretraining, KIT-ML results,
 official evaluator confidence intervals, and paper timing/quality claims are
-not established by these checks. See [Reproduction notes](REPRODUCTION.md).
+outside this validation scope. See [Training and evaluation](TRAINING.md).

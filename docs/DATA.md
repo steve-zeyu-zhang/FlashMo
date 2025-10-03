@@ -12,8 +12,8 @@ parent-relative body rotations. Translations are the original SMPL global
 translation parameters in metres. They are not the world-space pelvis joint:
 the licensed body model must apply its shape-dependent rest-pelvis offset.
 This convention is recorded in each manifest row. SMPL shape and
-gender are retained in the prepared files when available. They are not replaced
-with synthetic body proportions. Licensed SMPL assets are required for exact
+gender are retained in the prepared files when available. Licensed SMPL assets
+are required for exact
 mesh/joint reconstruction and the original HumanML3D evaluation conversion;
 they are not required to read rotation matrices.
 
@@ -22,8 +22,7 @@ they are not required to read rotation matrices.
 Obtain the original SMPL-H AMASS sequences from the
 [official dataset portal](https://amass.is.tue.mpg.de/download.php) under its
 access terms. Preserve the dataset/subject/sequence directory structure, for
-example `data/amass/CMU/80/80_63_poses.npz`. Public tutorial examples are not a
-replacement for those source sequences.
+example `data/amass/CMU/80/80_63_poses.npz`.
 
 The metadata downloader fetches the official `index.csv`, split
 files, and annotation archive from
@@ -44,8 +43,8 @@ python scripts/prepare_amass.py humanml \
 Repeat for `val.txt` and `test.txt`, writing separate output directories. Missing
 AMASS sequences or caption files fail preparation by default and are listed in
 `preparation_report.json`. `--allow-missing` explicitly permits a partial
-development subset and records every omitted ID. It must not be described as a
-complete HumanML3D benchmark. HumanAct12 records are excluded and reported:
+development subset and records every omitted ID. Evaluation of a partial
+subset must account for those omissions. HumanAct12 records are excluded and reported:
 they are part of HumanML3D, but they do not provide original AMASS rotations.
 
 Alignment follows the official
@@ -75,8 +74,8 @@ Alignment follows the official
    its matching motion interval.
 
 The official preprocessing later changes axes, normalizes the skeleton, and
-derives T2M features. This rotation dataset deliberately records native AMASS
-poses for the SO(3) VAE. The optional export bridge below performs that
+derives T2M features. The rotation dataset stores native AMASS poses for the
+SO(3) VAE. The optional export bridge below performs that
 conversion when licensed assets and the real target skeleton are supplied.
 
 ## Loader contract
@@ -142,8 +141,8 @@ model's zero mean-shape coefficients are used and recorded explicitly. Hands
 are set to zero because this model predicts the 22 body joints. The original
 AMASS body shape is retained in prepared input files, when available.
 The exporter passes `translations` into `BodyModel(trans=...)` and reads its
-`Jtr` output; it never inserts translation vectors as an assumed pelvis joint
-or adds a fabricated pelvis offset. Recentered training trajectories differ
+`Jtr` output, which includes the body model's shape-dependent pelvis offset.
+Recentered training trajectories differ
 from original AMASS trajectories by a constant displacement, which the
 HumanML floor/origin canonicalization subsequently removes.
 
@@ -153,10 +152,9 @@ only when the downstream evaluator expects already normalized features;
 otherwise let its existing loader normalize them once. A neighboring JSON
 file records body/reference/input hashes and normalization status.
 
-This bridge fails clearly when body models or reference joints are absent.
-Its canonicalization/feature path is tested on a nondegenerate synthetic joint
-fixture; licensed SMPL-H reconstruction has not been validated end to end in
-this environment because those model assets are unavailable. Exporting
-features is not itself a FID, retrieval, or diversity evaluation: those require
-the official pretrained text/motion evaluator, matched real-data split,
-sampling protocol, and complete benchmark data.
+The bridge requires licensed body models and reference joints and stops when
+either is missing. Canonicalization and feature extraction have unit-test
+coverage. End-to-end SMPL-H export remains unvalidated without the licensed
+assets. FID, retrieval, and diversity evaluation additionally require the
+pretrained text/motion evaluator, matching real-data split, sampling protocol,
+and complete benchmark data.

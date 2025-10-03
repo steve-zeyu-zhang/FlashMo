@@ -1,4 +1,4 @@
-# Paper section 4.2 defaults; implementation details are in docs/REPRODUCTION.md.
+# Training configuration; architecture and schedules are described in docs/TRAINING.md.
 seed: 42
 data:
   manifest: data/humanml3d/train/manifest.jsonl

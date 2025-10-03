@@ -14,7 +14,7 @@ Local compatibility changes: relative imports, `np.finfo(np.float)` becomes
 `np.finfo(float)`, and obsolete `np.float` casts in notebook comments become
 `np.float64`. Algorithmic behavior, including the original inverse-kinematics
 root convention, is retained to match that preprocessing version. The wrapper
-rejects nonfinite outputs instead of silently producing evaluation features.
+rejects nonfinite conversion outputs.
 
 No motion sequences, learned evaluators, body models, or reference skeleton
 assets are vendored.
