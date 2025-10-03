@@ -1,0 +1,53 @@
+# Paper section 4.2 defaults; implementation details are in docs/REPRODUCTION.md.
+seed: 42
+data:
+  manifest: data/humanml3d/train/manifest.jsonl
+  fps: 20
+  max_frames: 196
+  num_workers: 4
+vae:
+  num_joints: 22
+  latent_joints: 22
+  hidden_dim: 512
+  num_layers: 4
+  num_heads: 4
+  compression: 4
+  prior_type: wrapped_normal
+model:
+  latent_joints: 22
+  hidden_dim: 512
+  num_layers: 8
+  num_heads: 4
+  text_dim: 512
+  beta: 0.5
+  gamma: 0.95
+  attention_backend: block_sparse
+  attention_dtype: bfloat16
+  selection_queries: 0
+text:
+  kind: clip
+  local_files_only: false
+transport:
+  temporal_power: 1.0
+  spatial_power: 1.0
+  noise_schedule: linear
+  noise_scale: 1.0
+train:
+  batch_size: 256
+  learning_rate: 0.0001
+  weight_decay: 0.01
+  vae_epochs: 6000
+  flow_epochs: 3000
+  kl_weight: 0.0001
+  grad_clip: 1.0
+  log_every: 10
+  save_every: 1000
+  condition_dropout: 0.1
+  time_bins: 1000
+  context_frames: 20
+  prediction_frames: 40
+  prefix_probability: 0.5
+sample:
+  steps: 10
+  method: euler
+  guidance: 3.0

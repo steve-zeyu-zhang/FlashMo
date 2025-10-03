@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "flashmo"
+version = "0.1.0"
+description = "FlashMo: geometric factorized interpolants and frequency-aware sparse attention for text-to-motion generation"
+requires-python = ">=3.10"
+dependencies = [
+  "torch==2.6.0", "numpy>=1.26,<3", "scipy>=1.11,<2", "PyYAML>=6,<7",
+  "transformers==4.48.3", "huggingface-hub==0.28.1", "requests>=2.31,<3",
+  "safetensors>=0.4", "tqdm>=4.66"
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pypdf>=5"]
+visualize = ["matplotlib>=3.8", "pillow>=10"]
+
+[project.scripts]
+flashmo-train = "flashmo.train:main"
+flashmo-sample = "flashmo.sample:main"
+flashmo-evaluate = "flashmo.evaluate:main"
+
+[tool.setuptools.packages.find]
+include = ["flashmo*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"

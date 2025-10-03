@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "verified_on": "2025-10-04",
+  "repositories": {
+    "mdm": {
+      "name": "Motion Diffusion Model / DiP",
+      "url": "https://github.com/GuyTevet/motion-diffusion-model.git",
+      "commit": "ef8edce6a53c6ab19e53b4d4dcf15bc0bc60a778",
+      "license": "MIT",
+      "license_source": "LICENSE",
+      "license_file": "licenses/mdm-MIT.txt",
+      "license_sha256": "2532b783ef384bdcffb6d71af662b41f8365965c943fe5d2174695717d7a90a2",
+      "copyright": "Copyright (c) 2022 Guy Tevet",
+      "adapted_files": ["model/mdm.py", "model/BERT/BERT_encoder.py"],
+      "local_files": ["flashmo/models/dip.py", "flashmo/models/text.py"],
+      "role": "Decoder architecture, prefix completion, frozen text conditioning; no upstream model weights bundled"
+    },
+    "sit": {
+      "name": "Scalable Interpolant Transformers",
+      "url": "https://github.com/willisma/SiT.git",
+      "commit": "cbde832a40b153ccc79603412409da9c9b0c568c",
+      "license": "MIT",
+      "license_source": "LICENSE.txt",
+      "license_file": "licenses/sit-MIT.txt",
+      "license_sha256": "cf9b17822d1fcd4ff32ccbe14183386fb3adf6f2ff92dc184130823f7fc28173",
+      "copyright": "Copyright (c) Meta Platforms, Inc. and affiliates.",
+      "adapted_files": ["transport/path.py", "transport/transport.py", "transport/integrators.py"],
+      "local_files": ["flashmo/transport"],
+      "role": "Velocity-matching and integration structure adapted to geometric temporal-spatial interpolants"
+    },
+    "block_sparse_attn": {
+      "name": "Block-Sparse-Attention",
+      "url": "https://github.com/mit-han-lab/Block-Sparse-Attention.git",
+      "commit": "49d6c39e4dc0303442cda3bb758b3925d4399c49",
+      "license": "BSD-3-Clause",
+      "license_source": "LICENSE",
+      "license_file": "licenses/block-sparse-attn-BSD-3-Clause.txt",
+      "license_sha256": "28afc327f4cd7d94f554264b6bf3489e720d30bf4dadd5b63f8615013fcecb49",
+      "copyright": "Copyright (c) 2024, MIT HAN Lab",
+      "referenced_files": ["block_sparse_attn/block_sparse_attn_interface.py"],
+      "local_files": ["flashmo/models/block_sparse.py"],
+      "role": "Optional external CUDA backend; compacted token attention invokes the real upstream kernel",
+      "submodules": {
+        "csrc/cutlass": {
+          "url": "https://github.com/NVIDIA/cutlass.git",
+          "commit": "a75b4ac483166189a45290783cb0a18af5ff0ea5",
+          "license": "BSD-3-Clause",
+          "license_source": "LICENSE.txt",
+          "license_file": "licenses/cutlass-BSD-3-Clause.txt",
+          "license_sha256": "5f0ea053230eb92267e9e80ed67ec08899ebc55d093eff4a2273a7b340a48cca",
+          "copyright": "Copyright (c) 2017 - 2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved."
+        }
+      }
+    },
+    "litv2": {
+      "name": "LITv2 / HiLo attention",
+      "url": "https://github.com/ziplab/LITv2.git",
+      "commit": "7501c8662991cad6db780b61fac0886b56a76588",
+      "license": "Apache-2.0",
+      "license_source": "LICENSE",
+      "license_file": "licenses/litv2-Apache-2.0.txt",
+      "license_sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+      "copyright": "Copyright (c) 2022 Zhuang Intelligent Processing Lab. Written by Zizheng Pan.",
+      "referenced_files": ["hilo.py"],
+      "local_files": ["flashmo/models/attention.py"],
+      "role": "Frequency head partition concept; FlashMo replaces local windows and pooling with full/adaptive temporal attention"
+    },
+    "lie_vae": {
+      "name": "Explorations in Homeomorphic Variational Auto-Encoding",
+      "url": "https://github.com/pimdh/lie-vae.git",
+      "commit": "c473d91c494b9e80f6ac2998b1b6b927d09df259",
+      "license": "MIT",
+      "license_source": "LICENSE",
+      "license_file": "licenses/lie-vae-MIT.txt",
+      "license_sha256": "3ddfffaa40a47472253224f2a6c16a96397e238ee94dddd4f4a51700d5c5950f",
+      "copyright": "Copyright (c) 2020 Pim de Haan, Luca Falorsi, Tim Davidson",
+      "referenced_files": ["lie_vae/reparameterize.py", "lie_vae/lie_tools.py"],
+      "local_files": ["flashmo/models/vae.py", "flashmo/geometry/so3.py"],
+      "role": "SO(3) reparameterization and wrapped density with exponential-map volume correction"
+    }
+  },
+  "paper_references": {
+    "zipvl": {
+      "title": "ZipVL: Efficient Large Vision-Language Models with Dynamic Token Sparsification",
+      "paper": "https://arxiv.org/abs/2410.08584v2",
+      "project": "https://hexy.tech/zipvl/",
+      "author_website_repository": "https://github.com/ThisisBillhe/zipvl",
+      "author_website_commit": "1bc84a455ad5223b4a41b4c64e5537bd8d6393df",
+      "implementation_repository": null,
+      "source_status": "Author repository contains project website assets only; no official algorithm implementation located in the checked paper/project sources",
+      "local_files": ["flashmo/models/attention.py"],
+      "role": "Independent adaptation of v2 Equations 6-9 and optional query-subset score approximation; no ZipVL code/assets copied"
+    }
+  }
+}

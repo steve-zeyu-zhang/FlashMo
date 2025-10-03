@@ -1,0 +1,49 @@
+# Reduced architecture, unpaired authentic AMASS examples, engineering validation ONLY.
+seed: 42
+data:
+  manifest: data/processed_samples/manifest.jsonl
+  fps: 20
+  max_frames: 64
+  num_workers: 0
+vae:
+  num_joints: 22
+  latent_joints: 22
+  hidden_dim: 64
+  num_layers: 2
+  num_heads: 4
+  compression: 4
+  prior_type: wrapped_normal
+model:
+  latent_joints: 22
+  hidden_dim: 64
+  num_layers: 2
+  num_heads: 4
+  text_dim: 512
+  beta: 0.5
+  gamma: 0.95
+text:
+  kind: none
+transport:
+  temporal_power: 1.0
+  spatial_power: 1.0
+  noise_schedule: linear
+  noise_scale: 1.0
+train:
+  batch_size: 2
+  learning_rate: 0.0001
+  weight_decay: 0.01
+  vae_epochs: 200
+  flow_epochs: 200
+  kl_weight: 0.0001
+  grad_clip: 1.0
+  log_every: 10
+  save_every: 100
+  condition_dropout: 0.1
+  time_bins: 1000
+  context_frames: 20
+  prediction_frames: 40
+  prefix_probability: 0.5
+sample:
+  steps: 10
+  method: euler
+  guidance: 1.0
