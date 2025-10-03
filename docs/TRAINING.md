@@ -43,9 +43,7 @@ multi-worker run. Sampling uses a separate seeded generator.
 
 Metrics, dataset hashes, saved configuration, and checkpoints are written under
 the configured output directory. Generated files and `generation.json` record
-rotation validity, backend selection, seed, and checkpoint hash. Data,
-checkpoints, generated artifacts, build tools, and virtual environments are
-excluded from Git.
+rotation validity, backend selection, seed, and checkpoint hash.
 
 ## Configuration
 

@@ -26,10 +26,9 @@ world translations, and validate reconstruction and embedding metrics.
 
 These runs used two authentic public AMASS sequences from the AMASS authors,
 with explicit unpaired-data mode. Their HumanML3D membership is unverified and
-they do not supply text labels. All downloaded data, checkpoints, and generated
-motions remain local and Git-ignored.
+they do not supply text labels.
 
-| Run | Configuration | Result | Local artifacts |
+| Run | Configuration | Result | Output directory |
 | --- | --- | --- | --- |
 | VAE | Width 64, 2 layers, 100 steps | Finite losses/gradients; loss 2.0240 to 0.2357 | `outputs/smoke/vae/` |
 | MotionSiT | Width 64, 2 layers, 100 steps | Training and checkpoint reload completed | `outputs/smoke/flow/` |

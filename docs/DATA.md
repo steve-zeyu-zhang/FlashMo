@@ -121,7 +121,7 @@ Install `human_body_prior` separately for this optional export and supply an
 Extended SMPL-H `model.npz` obtained from the official model provider. Use the
 same body-model gender/shape convention for reference and generated motions.
 `--reference-joints` must point to the real HumanML3D `joints/000021.npy` produced
-by its licensed preprocessing. No replacement skeleton is bundled.
+by its licensed preprocessing.
 
 ```bash
 python scripts/export_humanml.py \

@@ -22,9 +22,9 @@ python scripts/fetch_upstream.py
 python scripts/fetch_upstream.py --check
 ```
 
-Snapshots go to ignored `third_party/checkouts/`. Existing directories with a
-different revision
-or tracked edits are rejected; the script never resets or overwrites them.
+Snapshots go to `third_party/checkouts/`. Existing directories with a
+different revision or tracked edits are rejected; the script never resets or
+overwrites them.
 Build submodules can be included when creating new snapshots with
 `--submodules`. Existing checkouts remain read-only, including submodules.
 For the optional CUDA backend and its dependencies, use
@@ -54,7 +54,7 @@ replaced by FlashMo's full Hi-Fi attention and selected Lo-Fi temporal keys.
 Attention-based adaptive token selection implements the cumulative scoring in
 [ZipVL v2, Equations 6–9](https://arxiv.org/html/2410.08584v2).
 The manifest records the paper and project links. The scorer is implemented
-within FlashMo; no ZipVL source files or website assets are included.
+within FlashMo.
 
 To fetch only selected source projects for an attribution audit, use their
 manifest identifiers, for example `python scripts/fetch_upstream.py --only mdm lie_vae`.
