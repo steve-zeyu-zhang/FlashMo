@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Meta tags for social media banners, these should be filled in appropriatly as they are your "business card" -->
+  <!-- Replace the content tag with appropriate information -->
+  <meta name="description" content="Motion Anything">
+  <meta property="og:title" content="Motion Anything: Any to Motion Generation"/>
+  <meta property="og:description" content="Motion Anything is an any-to-motion method for generating high-quality, controllable human motion under multimodal conditions, including text queries, background music and a mix of both."/>
+  <meta property="og:url" content="https://steve-zeyu-zhang.github.io/MotionAnything"/>
+  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X630-->
+  <meta property="og:image" content="static/images/main.png" />
+  <meta property="og:image:width" content="3840"/>
+  <meta property="og:image:height" content="1920"/>
+
+
+  <meta name="twitter:title" content="Motion Anything">
+  <meta name="twitter:description" content="Motion Anything: Any to Motion Generation">
+  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X600-->
+  <meta name="twitter:image" content="static/images/main.png">
+  <meta name="twitter:card" content="Motion Anything is an any-to-motion method for generating high-quality, controllable human motion under multimodal conditions, including text queries, background music and a mix of both.">
+  <!-- Keywords for your paper to be indexed by-->
+  <meta name="keywords" content="Human Motion Generation">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+  <title>FlashMo</title>
+  <link rel="icon" type="image/x-icon" href="static/images/run.svg">
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+  rel="stylesheet">
+
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script src="static/js/bulma-carousel.min.js"></script>
+  <script src="static/js/bulma-slider.min.js"></script>
+  <script src="static/js/index.js"></script>
+  <script>
+    window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+
+  <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+    <div class="navbar-menu">
+      <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+        <a class="navbar-item" href="https://steve-zeyu-zhang.github.io/">
+        <span class="icon">
+            <i class="fas fa-home"></i>
+        </span>
+        </a>
+  
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link">
+            More Research
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://steve-zeyu-zhang.github.io/MotionMamba">
+              Motion Mamba
+            </a>
+            <a class="navbar-item" href="https://steve-zeyu-zhang.github.io/MotionAvatar">
+              Motion Avatar
+            </a>
+            <a class="navbar-item" href="https://steve-zeyu-zhang.github.io/InfiniMotion">
+              InfiniMotion
+            </a>
+            <a class="navbar-item" href="https://steve-zeyu-zhang.github.io/KMM">
+              KMM
+            </a>
+            </a>
+          </div>
+        </div>
+      </div>
+  
+    </div>
+  </nav>
+
+
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title"><span class="viridis">FlashMo</span>: Geometric Interpolants and Frequency-Aware Sparsity for Scalable Efficient Motion Generation</h1>
+            <div class="is-size-5 publication-authors">
+              <!-- Paper authors -->
+              <span class="author-block">
+              <a href="https://steve-zeyu-zhang.github.io/" target="_blank">Zeyu Zhang</a><sup>1</sup><sup>*</sup>&nbsp;</span>
+              <span class="author-block">
+              <a href="https://www.linkedin.com/in/yiran-wang-101739246" target="_blank">Yiran Wang</a><sup>1</sup><sup>*</sup>&nbsp;</span>
+              <span class="author-block">
+              <a href="https://www.linkedin.com/in/danning-li-448039229/" target="_blank">Danning Li</a><sup>2</sup><sup>*</sup>&nbsp;</span>
+              <span class="author-block">
+              <a href="https://donggong1.github.io/" target="_blank">Dong Gong</a><sup>3</sup>&nbsp;</span>
+              <span class="author-block">
+              <a href="https://mbzuai.ac.ae/study/faculty/ian-reid/" target="_blank">Ian Reid</a><sup>2</sup>&nbsp;</span>
+              <span class="author-block">
+              <a href="https://users.cecs.anu.edu.au/~hartley/" target="_blank">Richard Hartley</a><sup>1</sup></span>
+                  </div>
+                  <p style="height: 10px;">&nbsp;</p> 
+                  <div class="is-size-5 publication-authors">
+                    <span class="author-block"><font size="4"><sup>1</sup><a href="https://www.anu.edu.au/" target="_blank">The Australian National University</a></font></span><br>
+                    <span class="author-block"><font size="4"><sup>2</sup><a href="https://mbzuai.ac.ae/" target="_blank">Mohamed bin Zayed University of Artificial Intelligence</a></font></span><br>
+                    <span class="author-block"><font size="4"><sup>3</sup><a href="https://www.unsw.edu.au/" target="_blank">The University of New South Wales</a></font></span><br>
+                    <p style="height: 10px;">&nbsp;</p>
+                    <span class="author-block"><font size="5"><a href="https://neurips.cc/Conferences/2025" target="_blank"><b style="color: OrangeRed;">NeurIPS 2025</b></a></font></span><br>
+                    <span class="eql-cntrb"><small><sup>*</sup>Equal Contribution.</small></span>
+                    <!-- <span class="eql-cntrb"><small><sup>✉</sup>Corresponding author.</small></span><br> -->
+                    <!-- <span class="eql-cntrb"><small><sup>†</sup>Work done while being a visiting student researcher at Peking University.</small></span> -->
+                  </div>
+
+                  <div class="column has-text-centered">
+                    <div class="publication-links">
+                         <!-- Paper link -->
+                      <span class="link-block">
+                        <a href="https://openreview.net/pdf/ae5d92318295aa49f1b14880d5b42a5f65f431f0.pdf" target="_blank"
+                        class="external-link button is-normal is-rounded is-dark">
+                        <span class="icon">
+                          <i class="fas fa-file-pdf"></i>
+                        </span>
+                        <span>Paper</span>
+                      </a>
+                    </span>
+
+                    <!-- Supplementary link -->
+                    <!-- <span class="link-block">
+                      <a href="static/pdfs/supplementary_material.pdf" target="_blank"
+                      class="external-link button is-normal is-rounded is-dark">
+                      <span class="icon">
+                        <i class="fas fa-file-pdf"></i>
+                      </span>
+                      <span>Supplementary</span>
+                    </a>
+                  </span> -->
+
+              <!-- ArXiv Link -->
+                <!-- <span class="link-block">
+                  <a href="https://arxiv.org/abs/2503.06955" target="_blank"
+                  class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span> -->
+
+                  <!-- Github link -->
+                  <span class="link-block">
+                    <a href="https://github.com/steve-zeyu-zhang/FlashMo" target="_blank"
+                    class="external-link button is-normal is-rounded is-dark"> <!-- style="opacity: 0.3;" -->
+                    <span class="icon">
+                      <i class="fab fa-github"></i>
+                    </span>
+                    <span>Code</span>
+                  </a>
+                </span>
+
+                <!-- Hugging Face Link -->
+                  <!-- <span class="link-block">
+                    <a href="https://huggingface.co/papers/2503.06955" target="_blank"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <img src="static/images/hfbw.svg" style="width: 70%;">
+                    </span>
+                    <span>Hugging Face</span>
+                  </a>
+                </span> -->
+
+                <!-- Citation Link -->
+                <span class="link-block">
+                  <a href="static/scholar.html" target="_blank"
+                  class="external-link button is-normal is-rounded is-dark">
+                  <span>BibTeX</span>
+                </a>
+              </span>
+
+                      
+            </div>
+          </div>          
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Teaser video-->
+<!-- <section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <video poster="" id="tree" autoplay controls muted loop height="100%">
+        <source src="static/videos/main.mp4"
+        type="video/mp4">
+      </video>
+      <h2 class="subtitle has-text-centered">
+        Eric Prydz - Call on Me (French House)
+      </h2>
+    </div>
+  </div>
+</section> -->
+<!-- End teaser video -->
+
+
+<!-- News -->
+<div class="news">
+  <h2><font size="4"> <b>News:</b> </font></h2>
+  <ul>
+    <li><b>(09/18/2025)</b> &#127881; Our paper has been accepted to <a href="https://neurips.cc/Conferences/2025"><b style="color: OrangeRed;">NeurIPS 2025</b></a>!</li>
+  </ul>
+</div>
+<!-- End News -->
+
+<p style="height: 50px;">&nbsp;</p>
+
+
+<!-- Paper abstract -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+            Diffusion models have recently advanced 3D human motion generation by producing smoother and more realistic sequences from natural language. However, existing approaches face two major challenges: high computational cost during training and inference, and limited scalability due to reliance on U-Net inductive bias. To address these challenges, we propose <strong>FlashMo</strong>, a frequency-aware sparse motion diffusion model that prunes low-frequency tokens to enhance efficiency without custom kernel design. We further introduce <em>MotionSiT</em>, a scalable diffusion transformer based on a joint-temporal factorized interpolant with Lie group geodesics over $SO(3)$ manifolds, enabling principled generation of joint rotations. Extensive experiments on the large-scale MotionHub V2 dataset and standard benchmarks including HumanML3D and KIT-ML demonstrate that our method significantly outperforms previous approaches in motion quality, efficiency, and scalability. Compared to the state-of-the-art 1-step distillation baseline, FlashMo reduces <strong>12.9%</strong> inference time and FID by <strong>34.1%</strong>.
+        </div>
+      </div>
+    </div>
+    <!-- Youtube -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <div class="publication-video">
+          <iframe src="https://www.youtube.com/embed/wEsuVGw4M8M?si=W_V2vD7HD1TrPJUq" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+      </div>
+    </div>
+    <!-- End Youtube -->
+  </div>
+</section>
+<!-- End paper abstract -->
+
+
+
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container">
+      <h2 class="title is-3">Visualization</h2>
+
+
+            <!-- Video Row Section -->
+            <div class="video-row">
+              
+              <!-- Video 1 Container -->
+              <div class="video-container">
+                <div class="caption" style="font-size: 20px;">MotionLCM</div>
+              </div>
+
+              <!-- Vertical Bar -->
+              <div class="vertical-bar"></div>
+  
+              <!-- Video 2 Container -->
+              <div class="video-container">
+                <div class="caption" style="font-size: 20px;">MoGenTS</div>
+              </div>
+
+              <!-- Vertical Bar -->
+              <div class="vertical-bar"></div>
+  
+              <!-- Video 3 Container -->
+              <div class="video-container">
+                <div class="caption" style="font-size: 20px;"><b>FlashMo (Ours)</b></div>
+              </div>
+
+          </div>
+  
+
+
+            <!-- Video Row Section -->
+          <div class="video-row">
+            <!-- Video 1 Container -->
+            <div class="video-container">
+                <video controls autoplay muted loop>
+                    <source src="static/videos/sample1/motionlcm.mp4" type="video/mp4">
+                </video>
+                <div class="caption">The man appears to walk forward, bending slightly and grabbing an object with their left hand.</div>
+            </div>
+
+            <!-- Vertical Bar -->
+            <div class="vertical-bar"></div>
+
+            <!-- Video 2 Container -->
+            <div class="video-container">
+                <video controls autoplay muted loop>
+                    <source src="static/videos/sample1/mogents.mp4" type="video/mp4">
+                </video>
+                <div class="caption">The man appears to walk forward, bending slightly and grabbing an object with their left hand.</div>
+            </div>
+
+            <!-- Vertical Bar -->
+            <div class="vertical-bar"></div>
+
+            <!-- Video 3 Container -->
+            <div class="video-container">
+                <video controls autoplay muted loop>
+                    <source src="static/videos/sample1/flashmo.mp4" type="video/mp4">
+                </video>
+                <div class="caption">The man appears to walk forward, bending slightly and grabbing an object with their left hand.</div>
+            </div>
+            
+          </div>
+
+          <!-- Video Row Section -->
+          <div class="video-row">
+            <!-- Video 1 Container -->
+            <div class="video-container">
+                <video controls autoplay muted loop>
+                    <source src="static/videos/sample2/motionlcm.mp4" type="video/mp4">
+                </video>
+                <div class="caption">A person is spinning with his arms spread out and then he falls over.</div>
+            </div>
+
+            <!-- Vertical Bar -->
+            <div class="vertical-bar"></div>
+
+            <!-- Video 2 Container -->
+            <div class="video-container">
+                <video controls autoplay muted loop>
+                    <source src="static/videos/sample2/mogents.mp4" type="video/mp4">
+                </video>
+                <div class="caption">A person is spinning with his arms spread out and then he falls over.</div>
+            </div>
+
+            <!-- Vertical Bar -->
+            <div class="vertical-bar"></div>
+
+            <!-- Video 3 Container -->
+            <div class="video-container">
+                <video controls autoplay muted loop>
+                    <source src="static/videos/sample2/flashmo.mp4" type="video/mp4">
+                </video>
+                <div class="caption">A person is spinning with his arms spread out and then he falls over.</div>
+            </div>
+            
+          </div>
+
+          <!-- Video Row Section -->
+          <div class="video-row">
+            <!-- Video 1 Container -->
+            <div class="video-container">
+                <video controls autoplay muted loop>
+                    <source src="static/videos/sample3/motionlcm.mp4" type="video/mp4">
+                </video>
+                <div class="caption">The man starts to dance a lot.</div>
+            </div>
+
+            <!-- Vertical Bar -->
+            <div class="vertical-bar"></div>
+
+            <!-- Video 2 Container -->
+            <div class="video-container">
+                <video controls autoplay muted loop>
+                    <source src="static/videos/sample3/mogents.mp4" type="video/mp4">
+                </video>
+                <div class="caption">The man starts to dance a lot.</div>
+            </div>
+
+            <!-- Vertical Bar -->
+            <div class="vertical-bar"></div>
+
+            <!-- Video 3 Container -->
+            <div class="video-container">
+                <video controls autoplay muted loop>
+                    <source src="static/videos/sample3/flashmo.mp4" type="video/mp4">
+                </video>
+                <div class="caption">The man starts to dance a lot.</div>
+            </div>
+            
+          </div>
+
+
+          <!-- Video Row Section -->
+          <div class="video-row">
+            <!-- Video 1 Container -->
+            <div class="video-container">
+                <video controls autoplay muted loop>
+                    <source src="static/videos/sample4/motionlcm.mp4" type="video/mp4">
+                </video>
+                <div class="caption">A person walks forwards straight while stumbling.</div>
+            </div>
+
+            <!-- Vertical Bar -->
+            <div class="vertical-bar"></div>
+
+            <!-- Video 2 Container -->
+            <div class="video-container">
+                <video controls autoplay muted loop>
+                    <source src="static/videos/sample4/mogents.mp4" type="video/mp4">
+                </video>
+                <div class="caption">A person walks forwards straight while stumbling.</div>
+            </div>
+
+            <!-- Vertical Bar -->
+            <div class="vertical-bar"></div>
+
+            <!-- Video 3 Container -->
+            <div class="video-container">
+                <video controls autoplay muted loop>
+                    <source src="static/videos/sample4/flashmo.mp4" type="video/mp4">
+                </video>
+                <div class="caption">A person walks forwards straight while stumbling.</div>
+            </div>
+            
+          </div>
+
+
+          <!-- Video Row Section -->
+          <div class="video-row">
+            <!-- Video 1 Container -->
+            <div class="video-container">
+                <video controls autoplay muted loop>
+                    <source src="static/videos/sample5/motionlcm.mp4" type="video/mp4">
+                </video>
+                <div class="caption">A person does karate by striking with their hands and kicking their legs.</div>
+            </div>
+
+            <!-- Vertical Bar -->
+            <div class="vertical-bar"></div>
+
+            <!-- Video 2 Container -->
+            <div class="video-container">
+                <video controls autoplay muted loop>
+                    <source src="static/videos/sample5/mogents.mp4" type="video/mp4">
+                </video>
+                <div class="caption">A person does karate by striking with their hands and kicking their legs.</div>
+            </div>
+
+            <!-- Vertical Bar -->
+            <div class="vertical-bar"></div>
+
+            <!-- Video 3 Container -->
+            <div class="video-container">
+                <video controls autoplay muted loop>
+                    <source src="static/videos/sample5/flashmo.mp4" type="video/mp4">
+                </video>
+                <div class="caption">A person does karate by striking with their hands and kicking their legs.</div>
+            </div>
+            
+          </div>
+
+    </div>
+  </div>
+</section>
+
+
+<section class="section hero is-light">
+  <div class="my-hero-body">
+    <div class="container">
+  <h2 class="title is-3">Observation 1: Motion Frequency</h2>
+</div>
+
+<p style="height: 50px;">&nbsp;</p>
+
+  <div class="image-container">
+    <center>
+    <img src="static/images/teaser.svg" style="width: 50%;">
+    <div class="image-description">
+      <p style="height: 10px;">&nbsp;</p><br>
+      <p><b>Frequency of human motion.</b> The diagram illustrates that dynamic motions exhibit higher frequencies, while static motions correspond to lower frequencies. This observation provides key insights for the frequency-aware sparsification design of our FlashMo.</p><br>
+    </div>
+    </center>
+  </div>
+
+</div>
+</section>
+
+
+<section class="section hero is-small">
+  <div class="my-hero-body">
+    <div class="container">
+  <h2 class="title is-3">Observation 2: Head-Level Pattern</h2>
+</div>
+
+<p style="height: 50px;">&nbsp;</p>
+
+  <div class="image-container">
+    <center>
+    <img src="static/images/freq_and_heat.svg" style="width: 50%;">
+    <div class="image-description">
+      <p style="height: 10px;">&nbsp;</p><br>
+      <p><b>Frequency magnitude vs. attention heatmap of attention heads.</b> The frequency magnitude is computed with the Fast Fourier Transform (FFT) and averaged over 100 latent motion features. Brighter colors indicate higher magnitudes. Pixels closer to the center represent lower frequencies. Both maps are visualized from the last layer of MotionSiT.</p><br>
+    </div>
+    </center>
+  </div>
+
+</div>
+</section>
+
+
+
+
+<section class="section hero is-light">
+  <div class="my-hero-body">
+    <div class="container">
+  <h2 class="title is-3">Architecture</h2>
+</div>
+
+<p style="height: 50px;">&nbsp;</p>
+
+  <div class="image-container">
+    <center>
+    <img src="static/images/architecture.svg" style="width: 50%;">
+    <div class="image-description">
+      <p style="height: 10px;">&nbsp;</p><br>
+      <p><b>FlashMo architecture.</b> FlashMo leverages frequency-aware sparsification and a MotionSiT backbone to efficiently and scalably generate motion from noised latent inputs.</p><br>
+    </div>
+    </center>
+  </div>
+
+</div>
+</section>
+
+<section class="section hero is-small">
+  <div class="my-hero-body">
+    <div class="container">
+  <h2 class="title is-3">Geometric Interpolants</h2>
+</div>
+
+<p style="height: 50px;">&nbsp;</p>
+
+  <div class="image-container">
+    <center>
+    <img src="static/images/geo.svg" style="width: 50%;">
+    <div class="image-description">
+      <p style="height: 10px;">&nbsp;</p><br>
+      <p>To improve scalability, we design geometric factorized interpolants, which differ from the standard SiT that interpolates all dimensions jointly in Euclidean space. Instead, we apply temporal–spatial factorized interpolation with Lie group geodesics on the manifold of joint rotations. This approach enables training diffusion directly on the $so(3)$ representation, leading to more stable training and better scalability on large datasets such as MotionHub V2.</p><br>
+    </div>
+    </center>
+  </div>
+
+</div>
+</section>
+
+
+<section class="section hero is-light">
+  <div class="my-hero-body">
+    <div class="container">
+  <h2 class="title is-3">Scalability</h2>
+</div>
+
+<p style="height: 50px;">&nbsp;</p>
+
+  <div class="image-container">
+    <center>
+    <img src="static/images/scalability.svg" style="width: 50%;">
+    <div class="image-description">
+      <p style="height: 10px;">&nbsp;</p><br>
+      <p><b>Scaling trend.</b> The figure demonstrates the scaling trends of different denoiser designs (<span style="color:#01796F;">U-Net</span>, <span style="color:RoyalBlue;">DiT</span>, <span style="color:Orchid;">SiT</span>, and <span style="color:red;"><strong>MotionSiT</strong></span>) with varying proportions of pretraining data. The results show that our <span style="color:red;"><strong>MotionSiT</strong></span> exhibits superior scalability and outperforms other methods.</p><br>
+    </div>
+    </center>
+  </div>
+
+</div>
+</section>
+
+
+<section class="section hero is-small">
+  <div class="my-hero-body">
+    <div class="container">
+  <h2 class="title is-3">Efficiency</h2>
+</div>
+
+<p style="height: 50px;">&nbsp;</p>
+
+  <div class="image-container">
+    <center>
+    <img src="static/images/efficiency.svg" style="width: 50%;">
+    <div class="image-description">
+      <p style="height: 10px;">&nbsp;</p><br>
+      <p><b>Efficiency comparison.</b> The figure demonstrates that FlashMo achieves the lowest inference time, training time, model size, and FLOPs while maintaining superior performance compared to other methods.</p><br>
+    </div>
+    </center>
+  </div>
+
+</div>
+</section>
+
+
+<!-- Paper poster -->
+<!-- <section class="hero is-small is-light">
+  <div class="hero-body">
+    <div class="container">
+      <h2 class="title">Poster</h2>
+
+      <iframe  src="static/pdfs/sample.pdf" width="100%" height="550">
+          </iframe>
+        
+      </div>
+    </div>
+  </section> -->
+<!--End paper poster -->
+
+
+
+
+<!--BibTex citation -->
+  <section class="section" id="BibTeX">
+    <div class="container is-max-desktop content">
+      <h2 class="title">BibTeX</h2>
+      <pre><code>@inproceedings{zhang2025flashmo,
+  title={FlashMo: Geometric Interpolants and Frequency-Aware Sparsity for Scalable Efficient Motion Generation},
+  author={Zhang, Zeyu and Wang, Yiran and Li, Danning and Gong, Dong and Reid, Ian and Hartley, Richard},
+  booktitle={The Thirty-ninth Annual Conference on Neural Information Processing Systems},
+  year={2025}
+}</code></pre>
+    </div>
+</section>
+<!--End BibTex citation -->
+
+<!-- 
+  <footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+
+          <p>
+            This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a> which was adopted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
+            You are free to borrow the of this website, we just ask that you link back to this page in the footer. <br> This website is licensed under a <a rel="license"  href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</footer> -->
+
+<!-- Statcounter tracking code -->
+  
+<!-- You can add a tracker to track page visits by creating an account at statcounter.com -->
+
+    <!-- End of Statcounter Code -->
+
+  </body>
+  </html>
